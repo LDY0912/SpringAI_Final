@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: skala-helpdesk-final
+  datasource:
+    url: jdbc:hsqldb:file:./data/helpdesk-memory;shutdown=true
+    username: sa
+    password:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:not-set}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.0
+      embedding:
+        options:
+          model: text-embedding-3-small
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: never
+      observations:
+        log-prompt: false
+      client:
+        observations:
+          log-prompt: false
+
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+    display-request-duration: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles:
+        ai.latency: 0.95
+
+logging:
+  level:
+    com.skala.helpdesk: INFO
+    AI_ADVISOR_AUDIT: INFO
+    AI_TOOL_AUDIT: INFO
+
+helpdesk:
+  tenant-id: skala
+  rag:
+    top-k: 5
+    threshold: 0.30
+  memory:
+    max-messages: 20
+  ingest:
+    chunk-size: 800
+    min-chunk-size-chars: 350
+    version: "2026-08-20"
+  security:
+    user1-password: ${HELPDESK_USER1_PASSWORD:user1-pass}
+    user2-password: ${HELPDESK_USER2_PASSWORD:user2-pass}
+    admin-password: ${HELPDESK_ADMIN_PASSWORD:admin-pass}
