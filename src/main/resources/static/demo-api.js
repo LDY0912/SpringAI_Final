@@ -75,10 +75,23 @@
     state.audit = state.audit.slice(0, 50);
   }
 
-  function answerFor(state, user, message, traceId) {
+  function findOrderId(message, history = []) {
+    const currentOrderId = message.match(/\b(12345|12346|99999)\b/)?.[1];
+    if (currentOrderId) return currentOrderId;
+
+    for (let index = history.length - 1; index >= 0; index -= 1) {
+      if (history[index].role !== "USER") continue;
+      const previousOrderId = history[index].text.match(/\b(12345|12346|99999)\b/)?.[1];
+      if (previousOrderId) return previousOrderId;
+    }
+    return undefined;
+  }
+
+  function answerFor(state, user, message, traceId, history = []) {
     const normalized = message.replace(/\s+/g, " ").trim();
     const lower = normalized.toLowerCase();
-    const orderId = normalized.match(/\b(12345|12346|99999)\b/)?.[1];
+    const orderId = findOrderId(normalized, history);
+    const isTicketRequest = lower.includes("환불") || lower.includes("교환") || lower.includes("접수");
 
     if (lower.includes("이전 지시") || lower.includes("시스템 프롬프트") || lower.includes("ignore previous")) {
       state.metrics.safetyRejections += 1;
@@ -103,7 +116,7 @@
         };
       }
 
-      if (lower.includes("환불") || lower.includes("교환") || lower.includes("접수")) {
+      if (isTicketRequest) {
         const type = lower.includes("교환") ? "EXCHANGE" : "REFUND";
         const no = `T-${String(state.ticketSequence++).padStart(4, "0")}`;
         state.tickets.push({ no, orderId, userId: user, type, reason: "단순 변심", status: "PENDING" });
@@ -125,6 +138,15 @@
           : `주문 ${orderId}은 배송 중이며 오늘 18시 이전 도착 예정입니다.`,
         sources: [],
         toolUsed: true,
+        traceId
+      };
+    }
+
+    if (isTicketRequest) {
+      return {
+        answer: "환불·교환을 접수할 주문번호를 먼저 알려주세요. 예: 주문 12345를 환불로 접수해 주세요.",
+        sources: [],
+        toolUsed: false,
         traceId
       };
     }
@@ -155,9 +177,9 @@
     if (url.pathname === "/api/chat" && method === "POST") {
       const body = typeof options.body === "string" ? JSON.parse(options.body) : options.body;
       const traceId = `demo-${Date.now().toString(36)}`;
-      const response = answerFor(state, user, body.message, traceId);
       const key = historyKey(user, body.sessionId);
       state.histories[key] ||= [];
+      const response = answerFor(state, user, body.message, traceId, state.histories[key]);
       state.histories[key].push(
         { role: "USER", text: body.message },
         { role: "ASSISTANT", text: response.answer }
