@@ -38,6 +38,7 @@ h2, h3 { margin: 0; letter-spacing: -.025em; }
 .connection-title div { display: flex; flex-direction: column; }
 .connection-title small, .chat-head small { margin-top: 3px; color: var(--muted); }
 .live-dot { width: 11px; height: 11px; border-radius: 50%; background: #22a447; box-shadow: 0 0 0 5px rgba(34, 164, 71, .12); }
+.live-dot.demo { background: #2161aa; box-shadow: 0 0 0 5px rgba(33, 97, 170, .12); }
 label { color: var(--muted); font-size: 11px; font-weight: 800; }
 input, textarea, select { width: 100%; border: 1px solid #cbd6e3; border-radius: 10px; background: #f8fafc; color: #14223a; outline: none; }
 input, select { margin-top: 6px; min-height: 42px; padding: 9px 11px; }

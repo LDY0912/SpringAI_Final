@@ -21,6 +21,9 @@ function notify(message, kind = "") {
 }
 
 async function apiJson(path, options = {}) {
+  if (window.HelpDeskDemo?.enabled) {
+    return window.HelpDeskDemo.request(path, options, byId("username").value);
+  }
   const headers = { Authorization: authHeader(), ...(options.headers || {}) };
   const request = { ...options, headers };
   if (options.body && typeof options.body !== "string") {
@@ -316,6 +319,11 @@ byId("refreshAdmin").addEventListener("click", () => runAdmin(
 ));
 
 const pageParams = new URLSearchParams(window.location.search);
+if (window.HelpDeskDemo?.enabled) {
+  byId("runtimeLabel").textContent = "GitHub Pages · 브라우저 데모";
+  document.querySelector(".live-dot").classList.add("demo");
+  notify("GitHub Pages 데모 모드입니다. 데이터는 이 브라우저에만 저장됩니다.", "success");
+}
 const requestedAccount = pageParams.get("account");
 if (requestedAccount && demoPasswords[requestedAccount]) {
   byId("username").value = requestedAccount;

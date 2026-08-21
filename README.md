@@ -47,6 +47,16 @@ export OPENAI_API_KEY="sk-..."
 - Human-in-the-loop: PENDING 교환·환불 티켓 확인 및 사람 승인
 - 관찰성: 토큰·모델·도구·차단·폴백 지표와 최근 Tool 감사 로그
 
+## 공개 데모
+
+`main` 브랜치에 푸시하면 GitHub Actions가 단위 테스트를 실행한 뒤 정적 UI를
+GitHub Pages에 배포한다. Pages에서는 서버 대신 브라우저 데모 API가 동작하며,
+대화 기록·티켓·지표는 해당 브라우저의 `localStorage`에만 저장된다. 실제 OpenAI
+호출과 Spring Boot API는 위의 로컬 실행 방법을 사용한다.
+
+- 공개 URL: <https://ldy0912.github.io/SpringAI_Final/>
+- 배포 워크플로: `.github/workflows/deploy-pages.yml`
+
 | 계정 | 기본 비밀번호 | 소유 주문 | 역할 |
 |---|---|---|---|
 | `user1` | `user1-pass` | `12345`, `12346` | USER |

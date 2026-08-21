@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="RAG, Tool, Memory, Safety, SSE를 통합한 SKALA HelpDesk AI 실습 화면">
   <title>SKALA HelpDesk AI</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <div class="page-glow glow-left"></div>
@@ -26,7 +26,7 @@
     <section class="connection card">
       <div class="connection-title">
         <span class="live-dot"></span>
-        <div><strong>실습 계정</strong><small>HTTP Basic 인증</small></div>
+        <div><strong>실습 계정</strong><small id="runtimeLabel">HTTP Basic 인증</small></div>
       </div>
       <label>계정
         <select id="username">
@@ -132,6 +132,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite">준비됨</div>
   </main>
-  <script src="/app.js" defer></script>
+  <script src="./demo-api.js" defer></script>
+  <script src="./app.js" defer></script>
 </body>
 </html>
